@@ -54,3 +54,45 @@ def construir_grafo(arquivo_coordenadas, arquivo_grafo):
               }
             )
     return grafo_final
+
+def read_DIMACS_graph(file_path):
+    graph = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.startswith('c'):
+                continue  # Ignorar comentários
+            elif line.startswith('p'):
+                parts = line.split()
+                num_nodes = int(parts[2])
+                for i in range(1, num_nodes + 1):
+                    graph[i] = []
+            elif line.startswith('a'):
+                parts = line.split()
+                source = int(parts[1])
+                target = int(parts[2])
+                weight = int(parts[3])
+                graph[source].append([target, weight])
+    return graph
+
+def read_DIMACS_coordinates(file_path):
+    verticle_to_coordinates = {}
+    coordinates_to_verticle = {}
+
+    file = open(file_path, 'r')
+    lines = file.read().splitlines()
+    for line in lines:
+        if line.startswith('c'):
+            continue  # Ignorar comentários
+        elif line.startswith('p'):
+            parts = line.split()
+            num_nodes = int(parts[4])
+            for i in range(1, num_nodes + 1):
+                verticle_to_coordinates[i] = []
+        elif line.startswith('v'):
+            parts = line.split()
+            verticle = int(parts[1])
+            lat = int(parts[3]) / 1000000
+            lon = int(parts[2]) / 1000000
+            verticle_to_coordinates[verticle].append((lat, lon))
+            coordinates_to_verticle[(lat, lon)] = verticle
+    return verticle_to_coordinates, coordinates_to_verticle
