@@ -4,6 +4,7 @@ from bfs_m import bfs
 from dfs_m import dfs
 from ucs_m import ucs
 from A_star_m import A_star_harvesine, A_star_euclidian_distance
+import csv
 
 
 if __name__ == "__main__":
@@ -13,6 +14,8 @@ if __name__ == "__main__":
     verticle_to_coordinates, coordinates_to_verticle = read_DIMACS_coordinates(arquivo_coordenadas)
     list_dict = construir_grafo(arquivo_coordenadas, arquivo_grafo)
 
+    resultados = [['run', 'inicio_aleatorio', 'destino_aleatorio', 'algoritimo', 'nos_expandidos', 'memoria_usada', 'fator_de_ramificacao', 'tempo_execucao']]
+
     for i in range(50):
         coordinates = list(coordinates_to_verticle.keys())
         random_start = random.choice(coordinates)
@@ -20,30 +23,24 @@ if __name__ == "__main__":
         start_node  = graph[coordinates_to_verticle[random_start]][0]
         end_node = graph[coordinates_to_verticle[random_end]][0]
 
-        caminho_bfs, no_expandidos_bfs, memoria_usada_bfs = bfs(list_dict, random_start, random_end, 30)
-        caminho_dfs, no_expandidos_dfs, memoria_usada_dfs = dfs(list_dict, random_start, random_end, 30)
-        caminho_ucs, no_expandidos_ucs, memoria_usada_ucs = ucs(list_dict, random_start, random_end, 30)
-        caminho_A_star_harvesine, no_expandidos_A_star_harvesine, memoria_usada_A_star_harvesine = A_star_harvesine(start_node, end_node, graph,  verticle_to_coordinates, 30)
-        caminho_A_star_euclidian_distance, no_expandidos_A_star_euclidian_distance, memoria_usada_A_star_euclidian_distance = A_star_euclidian_distance(start_node, end_node, graph,  verticle_to_coordinates, 30)
+        print(f'run: {i+1}\nstart: {random_start}\nend: {random_end}\n')
 
-        print("Rodada : " + str(i) + " " + "Partida : " + str(random_start) + " " + "Chegada : " + str(random_end))
+        caminho_bfs, no_expandidos_bfs, memoria_usada_bfs, ramificacao_bfs, tempo_bfs = bfs(list_dict, random_start, random_end, 90)
+        resultados.append([str(i+1), str(random_start), str(random_end), 'BFS', str(no_expandidos_bfs), str(memoria_usada_bfs), str(ramificacao_bfs), str(tempo_bfs)])
 
-        # print("Rodada : " + str(i) + " " + "Caminho bfs:", caminho_bfs)
-        print("Rodada : " + str(i) + " " + "Quantidade de nós expandidos bfs:", no_expandidos_bfs)
-        print("Rodada : " + str(i) + " " + "Quantidade de memória alocada bfs:", memoria_usada_bfs, "bytes")
-    
-        # print("Rodada : " + str(i) + " " + "Caminho dfs:", caminho_dfs)
-        print("Rodada : " + str(i) + " " + "Quantidade de nós expandidos dfs:", no_expandidos_dfs)
-        print("Rodada : " + str(i) + " " + "Quantidade de memória alocada dfs:", memoria_usada_dfs, "bytes")
+        caminho_dfs, no_expandidos_dfs, memoria_usada_dfs, ramificacao_dfs, tempo_dfs = dfs(list_dict, random_start, random_end, 90)
+        resultados.append([str(i+1), str(random_start), str(random_end), 'DFS', str(no_expandidos_dfs), str(memoria_usada_dfs), str(ramificacao_dfs), str(tempo_dfs)])
 
-        # print("Rodada : " + str(i) + " " + "Caminho ucs:", caminho_ucs)
-        print("Rodada : " + str(i) + " " + "Quantidade de nós expandidos ucs:", no_expandidos_ucs)
-        print("Rodada : " + str(i) + " " + "Quantidade de memória alocada ucs:", memoria_usada_ucs, "bytes")
-        
-        # print("Rodada : " + str(i) + " " + "Caminho A* Harvesine:", caminho_A_star_harvesine)
-        print("Rodada : " + str(i) + " " + "Quantidade de nós expandidos A* Harvesine:", no_expandidos_A_star_harvesine)
-        print("Rodada : " + str(i) + " " + "Quantidade de memória alocada A* Harvesine:", memoria_usada_A_star_harvesine, "bytes")
-        
-        # print("Rodada : " + str(i) + " " + "Caminho A* Distância euclidiana:", caminho_A_star_euclidian_distance)
-        print("Rodada : " + str(i) + " " + "Quantidade de nós expandidos A* Distância euclidiana:", no_expandidos_A_star_euclidian_distance)
-        print("Rodada : " + str(i) + " " + "Quantidade de memória alocada A* Distância euclidiana:", memoria_usada_A_star_euclidian_distance, "bytes")
+        caminho_ucs, no_expandidos_ucs, memoria_usada_ucs, ramificacao_ucs, tempo_ucs = ucs(list_dict, random_start, random_end, 90)
+        resultados.append([str(i+1), str(random_start), str(random_end), 'UCS', str(no_expandidos_ucs), str(memoria_usada_ucs), str(ramificacao_ucs), str(tempo_ucs)])
+
+        caminho_A_star_harvesine, no_expandidos_A_star_harvesine, memoria_usada_A_star_harvesine, ramificacao_A_star_harvesine, tempo_bfs_A_star_harvesine = A_star_harvesine(start_node, end_node, graph,  verticle_to_coordinates, 90)
+        resultados.append([str(i+1), str(random_start), str(random_end), 'A_star_harvesine', str(no_expandidos_A_star_harvesine), str(memoria_usada_A_star_harvesine), str(ramificacao_A_star_harvesine), str(tempo_bfs_A_star_harvesine)])
+
+        caminho_A_star_euclidian_distance, no_expandidos_A_star_euclidian_distance, memoria_usada_A_star_euclidian_distance, ramificacao_A_star_euclidian_distance, tempo_A_star_euclidian_distance = A_star_euclidian_distance(start_node, end_node, graph,  verticle_to_coordinates, 90)
+        resultados.append([str(i+1), str(random_start), str(random_end), 'A_star_euclidian_distance', str(no_expandidos_A_star_euclidian_distance), str(memoria_usada_A_star_euclidian_distance), str(ramificacao_A_star_euclidian_distance), str(tempo_A_star_euclidian_distance)])
+
+    with open('result_dataset.csv', mode='w', newline='') as arquivo_csv:
+        escritor_csv = csv.writer(arquivo_csv, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        for linha in resultados:
+            escritor_csv.writerow(linha)

@@ -18,11 +18,11 @@ def A_star_harvesine(start_node, end_node, graph, coordinates, timeout=10):
     closed = []             
     opened = []             
     g_cost = {}
-    expanded_nodes = 0
     g_cost[start_node[0]] = 0
-
     opened.append(start_node)
 
+    expanded_nodes = 0
+    sum_fator_ramificacao = 0
     while len(opened) > 0:
         used_memory = getsizeof(closed) + getsizeof(opened) + getsizeof(g_cost) + getsizeof(expanded_nodes)
         f_cost_opened_list = [node[1] for node in opened]
@@ -31,7 +31,6 @@ def A_star_harvesine(start_node, end_node, graph, coordinates, timeout=10):
         node = opened[chosen_index][0]
         closed.append(opened[chosen_index])
         opened.pop(chosen_index)
-        expanded_nodes = expanded_nodes + 1
 
         if node == end_node[0]:
             break
@@ -41,22 +40,25 @@ def A_star_harvesine(start_node, end_node, graph, coordinates, timeout=10):
             g_cost[item[0]] = g_cost[node] + item[1]           
             f_cost_node = g_cost[node] + harvesine(coordinates[item[0]][0][0],coordinates[item[0]][0][1], coordinates[end_node[0]][0][0], coordinates[end_node[0]][0][1]) + item[1]
             opened.append([item[0], f_cost_node])
+            expanded_nodes = expanded_nodes + 1
+            sum_fator_ramificacao += len(graph[item[0]])
 
         if (time.time() - runtime) > timeout:
             break                       
 
-    return closed, expanded_nodes, used_memory
+    return closed, expanded_nodes, used_memory, (sum_fator_ramificacao/len(closed)), (time.time() - runtime)
 
 def A_star_euclidian_distance(start_node, end_node, graph, coordinates, timeout=10):
     runtime = time.time()
     closed = []             
     opened = []             
     g_cost = {}
-    expanded_nodes = 0
     g_cost[start_node[0]] = 0
 
     opened.append(start_node)
 
+    expanded_nodes = 0
+    sum_fator_ramificacao = 0
     while len(opened) > 0:
         used_memory = getsizeof(closed) + getsizeof(opened) + getsizeof(g_cost) + getsizeof(expanded_nodes)
         f_cost_opened_list = [node[1] for node in opened]
@@ -65,7 +67,6 @@ def A_star_euclidian_distance(start_node, end_node, graph, coordinates, timeout=
         node = opened[chosen_index][0]
         closed.append(opened[chosen_index])
         opened.pop(chosen_index)
-        expanded_nodes = expanded_nodes + 1
 
         if node == end_node[0]:
             break
@@ -75,8 +76,10 @@ def A_star_euclidian_distance(start_node, end_node, graph, coordinates, timeout=
             g_cost[item[0]] = g_cost[node] + item[1]           
             f_cost_node = g_cost[node] + euclidean_distance(coordinates[item[0]][0][0],coordinates[item[0]][0][1], coordinates[end_node[0]][0][0], coordinates[end_node[0]][0][1]) + item[1]
             opened.append([item[0], f_cost_node])
+            expanded_nodes = expanded_nodes + 1
+            sum_fator_ramificacao += len(graph[item[0]])
 
         if (time.time() - runtime) > timeout:
             break                       
 
-    return closed, expanded_nodes, used_memory
+    return closed, expanded_nodes, used_memory, (sum_fator_ramificacao/len(closed)), (time.time() - runtime)
