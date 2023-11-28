@@ -7,9 +7,9 @@ def bfs(graph, origem, destino, tempo_limite=10):
     fila = deque()
     visitados = set()
     fila.append((origem, [origem]))
-
     no_filho_exp = 0
     no_expandidos = 0
+
     while fila:
         no, caminho = fila.popleft()
         visitados.add(no)
@@ -17,9 +17,9 @@ def bfs(graph, origem, destino, tempo_limite=10):
         if no == destino:
             break
 
-        for destinatario, peso in graph[no]:
-            if destinatario not in visitados:
-                fila.append((destinatario, caminho + [destinatario]))
+        for dest, _ in graph[no]:
+            if dest not in visitados:
+                fila.append((dest, caminho + [dest]))
                 no_filho_exp += 1
             no_expandidos = no_expandidos + 1
 

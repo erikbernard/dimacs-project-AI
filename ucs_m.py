@@ -2,7 +2,6 @@ import sys
 from heapq import heappush, heappop
 from time import time
 
-
 def ucs(graph, origem, destino, tempo_limite=10):
     tempo_execucao = time()
     fila_prioridade = [(0, origem, [origem])]
