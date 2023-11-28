@@ -55,6 +55,24 @@ def construir_grafo(arquivo_coordenadas, arquivo_grafo):
             )
     return grafo_final
 
+def construir_dicionario(co, gr):
+    final = {}
+
+    # Adiciona os nós do dicionário co ao dicionário final
+    for node, coordinates in co.items():
+        final[coordinates[0]] = []
+
+    # Preenche o dicionário final com as arestas do grafo gr
+    for node, edges in gr.items():
+        current_coordinates = co[node][0]
+        for edge in edges:
+            neighbor = edge[0]
+            weight = edge[1]
+            neighbor_coordinates = co[neighbor][0]
+            final[current_coordinates].append([neighbor_coordinates, weight])
+
+    return final
+
 def read_DIMACS_graph(file_path):
     graph = {}
     with open(file_path, 'r') as file:
